@@ -1,4 +1,4 @@
-import java.sql.Connection;
+/*import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,7 +19,7 @@ public class JDBCExample {
         ResultSet localrs = null;
 
     
-        String url = "jdbc:postgresql://172.20.194.136:5432/ChillerProject";
+        String url = "jdbc:postgresql://132.147.88.190:5432/ChillerProject";
         String user = "ecoadm";
         String password = "ev093qer";
         
@@ -30,11 +30,11 @@ public class JDBCExample {
 
         try {
         	
-        	/* connect to remote server database*/
+        	 connect to remote server database
             con = DriverManager.getConnection(url, user, password);
             st = con.createStatement();
             
-            /* Local connection with database */ 
+             Local connection with database  
             localcon=DriverManager.getConnection(localurl, localuser, localpassword);
             localst = localcon.createStatement();
             
@@ -94,4 +94,4 @@ public class JDBCExample {
             }
         }
     }
-}
+}*/
