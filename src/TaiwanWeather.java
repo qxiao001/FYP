@@ -28,12 +28,13 @@ public class TaiwanWeather {
 
        
         
-        saveURLToFile("http://opendata.cwb.gov.tw/member/opendataapi?dataid=O-A0001-001&authorizationkey=CWB-9488A5D7-3B34-449B-81E9-51836A5A6CA6","src/main/resources/A0001.xml");
-        saveURLToFile("http://opendata.cwb.gov.tw/member/opendataapi?dataid=O-A0002-001&authorizationkey=CWB-9488A5D7-3B34-449B-81E9-51836A5A6CA6","src/main/resources/A0002.xml");
+      //  saveURLToFile("http://opendata.cwb.gov.tw/member/opendataapi?dataid=O-A0001-001&authorizationkey=CWB-9488A5D7-3B34-449B-81E9-51836A5A6CA6","src/main/resources/A0001.xml");
+      //  saveURLToFile("http://opendata.cwb.gov.tw/member/opendataapi?dataid=O-A0002-001&authorizationkey=CWB-9488A5D7-3B34-449B-81E9-51836A5A6CA6","src/main/resources/A0002.xml");
         Parser parser=new Parser();
         HashMap tempMap=parser.parseTemp("src/main/resources/A0001.xml");  
         HashMap rainMap=parser.parseRain("src/main/resources/A0002.xml"); 
-        writehashMapToDB(tempMap);
+        writehashMapToDB(true,tempMap);
+        writehashMapToDB(false,rainMap);
 
     }
     
@@ -55,7 +56,7 @@ public class TaiwanWeather {
     	System.out.println("file save successfully!" + fileName);
     	
     }
-    public static void writehashMapToDB(HashMap hashMap){
+    public static void writehashMapToDB(Boolean isTemp, HashMap hashMap){
     	
     	
         Connection con = null;
@@ -92,8 +93,13 @@ public class TaiwanWeather {
     	      String id = (String) pair.getKey();
     	      String time = (String)((ArrayList)pair.getValue()).get(0);  //get time stamp string
     	      String value = (String)((ArrayList)pair.getValue()).get(1);  //get value string
-    	      System.out.println(pair.getKey() + " : " + time + value);      
-    	      query= "insert into \"Taiwan_Temp\" values(\'"+time+"\',\'"+id+"\',\'"+value+"\')";
+    	      System.out.println(pair.getKey() + " : " + time + value); 
+    	      if (isTemp){
+    	      query= "insert into \"Taiwan_Temp\" values(\'"+time+"\',\'"+id+"\',\'"+value+"\')";}
+    	      else {
+    	    	  query= "insert into \"Taiwan_Rain\" values(\'"+time+"\',\'"+id+"\',\'"+value+"\')";
+    	      }
+    	    	  
               st.executeUpdate(query);
     	    }
            
