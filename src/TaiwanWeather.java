@@ -13,9 +13,10 @@ import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
-
+import java.util.HashMap;
+import java.util.Iterator;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -30,9 +31,9 @@ public class TaiwanWeather {
         saveURLToFile("http://opendata.cwb.gov.tw/member/opendataapi?dataid=O-A0001-001&authorizationkey=CWB-9488A5D7-3B34-449B-81E9-51836A5A6CA6","src/main/resources/A0001.xml");
         saveURLToFile("http://opendata.cwb.gov.tw/member/opendataapi?dataid=O-A0002-001&authorizationkey=CWB-9488A5D7-3B34-449B-81E9-51836A5A6CA6","src/main/resources/A0002.xml");
         Parser parser=new Parser();
-        Hashtable tempTable=parser.parseTemp("src/main/resources/A0001.xml");  
-        Hashtable rainTable=parser.parseRain("src/main/resources/A0002.xml"); 
-        writeHashTableToDB(tempTable);
+        HashMap tempMap=parser.parseTemp("src/main/resources/A0001.xml");  
+        HashMap rainMap=parser.parseRain("src/main/resources/A0002.xml"); 
+        writehashMapToDB(tempMap);
 
     }
     
@@ -54,7 +55,7 @@ public class TaiwanWeather {
     	System.out.println("file save successfully!" + fileName);
     	
     }
-    public static void writeHashTableToDB(Hashtable hashTable){
+    public static void writehashMapToDB(HashMap hashMap){
     	
     	
         Connection con = null;
@@ -80,14 +81,19 @@ public class TaiwanWeather {
             	System.out.println("local Connection Established: going to insert");
                 System.out.println(rs.getString(1));
             }
+  
             
-            Enumeration e = hashTable.keys();
-            Date date= new Date();
-  	        Timestamp timestamp=new Timestamp(date.getTime());
-    	    while (e.hasMoreElements()) {
-    	      String key = (String) e.nextElement();
-    	      System.out.println(key + " : " + hashTable.get(key));      
-    	      query= "insert into \"Taiwan_Temp\" values(\'"+timestamp.toString()+"\',\'"+hashTable.get(key)+"\')";
+         //   Date date= new Date();
+  	     //   Timestamp timestamp=new Timestamp(date.getTime());
+            
+            Iterator it = hashMap.entrySet().iterator();
+    	    while (it.hasNext()){
+    	      HashMap.Entry pair = (HashMap.Entry)it.next();
+    	      String id = (String) pair.getKey();
+    	      String time = (String)((ArrayList)pair.getValue()).get(0);  //get time stamp string
+    	      String value = (String)((ArrayList)pair.getValue()).get(1);  //get value string
+    	      System.out.println(pair.getKey() + " : " + time + value);      
+    	      query= "insert into \"Taiwan_Temp\" values(\'"+time+"\',\'"+id+"\',\'"+value+"\')";
               st.executeUpdate(query);
     	    }
            
